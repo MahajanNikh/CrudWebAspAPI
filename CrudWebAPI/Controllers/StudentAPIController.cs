@@ -63,13 +63,15 @@ namespace CrudWebAPI.Controllers
 
         [HttpDelete("{id}")]
 
-        public async Task<ActionResult<Student>> DeleteStudent(int id, Student std)
+        public async Task<ActionResult<Student>> DeleteStudent(int id)
         {
-            if (id != std.Id)
+            var std = await context.Students.FindAsync(id);
+            if (std == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-            context.Entry(std).State = EntityState.Deleted;
+
+            context.Students.Remove(std);
             await context.SaveChangesAsync();
 
             return Ok(std);
